@@ -1,4 +1,8 @@
 import streamlit as st
+from datetime import date
+import pandas as pd
+
+today = date.today()
 
 def init_state():
     for k, v in {
@@ -10,3 +14,14 @@ def init_state():
     }.items():
         if k not in st.session_state:
             st.session_state[k] = v
+
+
+def followup_bucket(val):
+    try:
+        d = pd.to_datetime(val).date() if val else None
+    except Exception:
+        d = None
+    if not d:         return "No Date"
+    if d < today:     return "Overdue"
+    if d == today:    return "Due Today"
+    return "Upcoming"
