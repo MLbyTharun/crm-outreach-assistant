@@ -30,9 +30,9 @@ def followup_bucket(val):
 def enrich(df: pd.DataFrame) -> pd.DataFrame: #  ^^^
     """Normalising columns and recomputing priority + bucket on the whole DataFrame."""
     df = df.copy()
-    df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
+    df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]  #^^^
 
-    # Ensure all expected columns exist if not we create them 
+    # Ensuring all expected columns exist if not we create them 
     for col in ["name", "contact", "company", "status", "interest_level", "notes"]:
         if col not in df.columns:
             df[col] = ""
