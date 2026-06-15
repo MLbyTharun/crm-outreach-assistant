@@ -5,7 +5,7 @@ def init_state():
         "df":            None,   # working DataFrame — only this user's data
         "file_name":     None,   # original filename so export keeps the same name
         "msg_log":       {},     # {row_idx: [{"tone":..,"message":..,"ts":..}]}
-        "last_file_key": None,   # prevent re-import on rerun
+        "last_file_key": None,   # prevent re-import
         "llm":           None,   # FollowUpGenerator instance — created once per session
     }.items():
         if k not in st.session_state:
