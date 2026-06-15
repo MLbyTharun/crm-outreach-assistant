@@ -43,3 +43,12 @@ def compute_priority_score(next_followup, status: str, interest_level: str) -> f
     raw = urgency + status_score + interest_score
     normalised = round(min(raw / 11 * 10, 10), 1) # it will reach max 10 so i used min her
     return normalised
+
+
+def score_label(score: float) -> str:
+    if score >= 8:
+        return "🔴 Hot"
+    elif score >= 5:
+        return "🟡 Warm"
+    else:
+        return "🟢 Cool"
