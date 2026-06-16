@@ -370,9 +370,7 @@ with tab_analytics:
 
         st.bar_chart(interest_counts)
 
-   # r2l = st.columns(1)
-
-    #with r2l:
+  
     bc = df["bucket"].value_counts().reset_index()
     bc.columns = ["Bucket", "Count"]
     
