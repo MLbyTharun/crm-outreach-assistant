@@ -134,7 +134,6 @@ Messages are grounded in the customer's actual notes and always end with a clear
 | Frontend / UI | [Streamlit](https://streamlit.io/) |
 | Data Processing | [Pandas](https://pandas.pydata.org/) |
 | AI / LLM | [Groq Python SDK](https://github.com/groq/groq-python) — LLaMA 3.3 70B |
-| Charts | [Plotly Express](https://plotly.com/python/plotly-express/) |
 | Database | [SQLAlchemy](https://www.sqlalchemy.org/) + SQLite |
 | Env Management | [python-dotenv](https://github.com/theskumar/python-dotenv) |
  
