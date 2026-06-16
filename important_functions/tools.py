@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import date
 import pandas as pd
-from scoring import compute_priority_score, score_label
+from important_functions.scoring import compute_priority_score, score_label
 today = date.today()
 
 def init_state():

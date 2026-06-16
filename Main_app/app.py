@@ -2,9 +2,12 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from datetime import date
+import os, sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from dotenv import load_dotenv
 
-from models.llm import FollowUpGenerator
+from model.llm import FollowUpGenerator
 from important_functions.scoring import compute_priority_score, score_label
 from important_functions.tools import init_state,enrich, followup_bucket
 
@@ -347,18 +350,6 @@ with tab_ai:
             st.session_state.msg_log.setdefault(ai_idx, []).append(entry)
             
 
-    # Per-customer message history
-    #st.divider()
-    
-   # st.subheader(f"Message History — {ai_row['name']}")
-  #  history = st.session_state.msg_log.get(ai_idx, [])
-  #  if history:
-   #     for entry in reversed(history):
-   #         with st.expander(f"🕐 {entry['ts']}  ·  {entry['tone']}"):
-   #             st.write(entry["message"])
-   # else:
-    #    st.caption("No messages generated yet for this customer.")
-
 # ─────────────────────────────────────────────────────────────────────────────
 # TAB 5 — ANALYTICS
 # ─────────────────────────────────────────────────────────────────────────────
@@ -373,13 +364,11 @@ with tab_analytics:
         st.subheader("Leads by Status")
         st.bar_chart(sc)
     with r1r:
-        ic = df["interest_level"].value_counts().reset_index()
-        ic.columns = ["Interest", "Count"]
-        fig2 = px.pie(ic, names="Interest", values="Count",
-                      title="Interest Level Breakdown", hole=0.4,
-                      color_discrete_sequence=px.colors.qualitative.Pastel)
-        fig2.update_layout(plot_bgcolor="rgba(0,0,0,0)", paper_bgcolor="rgba(0,0,0,0)")
-        st.plotly_chart(fig2, use_container_width=True)
+        st.subheader("Interest Level Breakdown")
+
+        interest_counts = df["interest_level"].value_counts()
+
+        st.bar_chart(interest_counts)
 
    # r2l = st.columns(1)
 
