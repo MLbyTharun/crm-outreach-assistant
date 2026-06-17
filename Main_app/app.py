@@ -5,14 +5,14 @@ from datetime import date
 import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
 from model.llm import FollowUpGenerator
 from important_functions.scoring import compute_priority_score, score_label
 from important_functions.tools import init_state,enrich, followup_bucket
 
 
-load_dotenv()
+#load_dotenv()
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(page_title="FollowUp AI", page_icon="🤖", layout="wide")
 
@@ -157,6 +157,16 @@ with st.sidebar:
         "Use **Download updated CSV** at the top to save your work."
     )
 
+    st.header("⚙️ Groq Settings")
+    api_key = st.text_input(
+        "Groq API Key", 
+        type="password", 
+        value="", # can be setted in .env file or can be directly setted in web
+        help="Get a free key at console.groq.com"
+    )
+    
+
+    
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 tab_dash, tab_all, tab_edit, tab_ai, tab_analytics = st.tabs([
@@ -300,6 +310,7 @@ with tab_edit:
 # ─────────────────────────────────────────────────────────────────────────────
 with tab_ai:
     st.subheader("Generate Follow-Up Message")
+    st.info("Make sure to set your Groq API key in the sidebar before generating messages.", icon="💡")
     col_l, col_r = st.columns([1, 1])
 
     with col_l:
@@ -323,7 +334,7 @@ with tab_ai:
             # Instantiate once per session; reuse on every generation
             if st.session_state.llm is None:
                 try:
-                    st.session_state.llm = FollowUpGenerator()
+                    st.session_state.llm = FollowUpGenerator(api_key)
                 except EnvironmentError as e:
                     st.error(str(e))
                     st.stop()
