@@ -1,10 +1,15 @@
 import os
+import sys
+
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()  
 
-class FollowUpGenerator(): # Packed all LLM logic into this class for easiness
+class FollowUpGenerator: # Packed all LLM logic into this class for easiness
 
     MODEL = "llama-3.3-70b-versatile"
     MAX_TOKENS = 200
@@ -17,12 +22,7 @@ class FollowUpGenerator(): # Packed all LLM logic into this class for easiness
         "Always end with a clear, specific next step."
     )
 
-    def __init__(self):
-        api_key = os.environ.get("GROQ_API_KEY")
-        if not api_key:
-            raise EnvironmentError(
-                "GROQ_API_KEY not set. Add it to your environment or Streamlit secrets."
-            )
+    def __init__(self,api_key):
         self._client = Groq(api_key=api_key)
 
     def _build_prompt(self, customer: dict, tone: str) -> str: # ^^^
