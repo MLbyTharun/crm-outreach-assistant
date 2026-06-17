@@ -2,6 +2,7 @@
  
 An AI-powered follow-up assistant for small business sales teams. Upload your leads CSV, automatically score and prioritize contacts, and generate personalized outreach messages — all from a clean Streamlit interface.
  
+Try App Here : [ CRM-MANAGEMENT-ASSISTANT](https://crm-management-assistant.streamlit.app/)
 ---
  
 ## ✨ Features
