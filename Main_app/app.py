@@ -5,15 +5,13 @@ from datetime import date
 import os, sys
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-#from dotenv import load_dotenv
+
 
 from model.llm import FollowUpGenerator
 from important_functions.scoring import compute_priority_score, score_label
 from important_functions.tools import init_state,enrich, followup_bucket
 
-
-#load_dotenv()
-# ── Page config ───────────────────────────────────────────────────────────────
+# Page config
 st.set_page_config(page_title="FollowUp AI", page_icon="🤖", layout="wide")
 
 today = date.today()
@@ -40,10 +38,10 @@ def has_data() -> bool:
     return st.session_state.df is not None and not st.session_state.df.empty
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
+
 #  UPLOAD GATE — every session starts here; nothing else is shown until a CSV
 #  is loaded. Each browser session is completely independent.
-# ═══════════════════════════════════════════════════════════════════════════════
+
 if not has_data():
     st.title("🤖 AI Follow-Up Assistant")
     st.markdown("### Upload your leads CSV to get started")
@@ -94,12 +92,11 @@ if not has_data():
     st.stop()   # Nothing below runs until a CSV is loaded
 
 
-# ═══════════════════════════════════════════════════════════════════════════════
 #  MAIN APP — only reached after a CSV is uploaded
-# ═══════════════════════════════════════════════════════════════════════════════
+
 df = st.session_state.df
 
-# ── Top bar ───────────────────────────────────────────────────────────────────
+# Top bar 
 col_title, col_export, col_reset = st.columns([4, 2, 1])
 col_title.title("🤖 AI Follow-Up Assistant")
 col_title.caption(
@@ -122,7 +119,7 @@ if col_reset.button("🔄 New file", use_container_width=True,
 
 st.divider()
 
-# ── Sidebar — Add a new customer ──────────────────────────────────────────────
+# Sidebar — Add a new customer 
 with st.sidebar:
     st.header("➕ Add Customer")
     with st.form("add_form", clear_on_submit=True):
@@ -168,15 +165,15 @@ with st.sidebar:
 
     
 
-# ── Tabs ──────────────────────────────────────────────────────────────────────
+# Tabs 
 tab_dash, tab_all, tab_edit, tab_ai, tab_analytics = st.tabs([
     "📊 Dashboard", "👥 All Customers", "✏️ Edit / Delete",
     "✍️ AI Messages", "📈 Analytics",
 ])
 
-# ─────────────────────────────────────────────────────────────────────────────
+
 # TAB 1 — DASHBOARD
-# ─────────────────────────────────────────────────────────────────────────────
+
 with tab_dash:
     overdue   = (df["bucket"] == "Overdue").sum()
     due_today = (df["bucket"] == "Due Today").sum()
@@ -209,9 +206,9 @@ with tab_dash:
         st.dataframe(df[df["bucket"] == "Upcoming"][show_cols],
                      use_container_width=True, hide_index=True)
 
-# ─────────────────────────────────────────────────────────────────────────────
+
 # TAB 2 — ALL CUSTOMERS + EXPORT
-# ─────────────────────────────────────────────────────────────────────────────
+
 with tab_all:
     st.subheader(f"All Customers ({len(df)})")
 
@@ -234,17 +231,11 @@ with tab_all:
         "text/csv",
     )
 
-# ─────────────────────────────────────────────────────────────────────────────
 # TAB 3 — EDIT / DELETE
-# ─────────────────────────────────────────────────────────────────────────────
+
 with tab_edit:
     st.subheader("Edit or Delete a Customer")
 
-    #options = {
-    #    f"{row['name']}  ({row['contact']})": idx
-    #    for idx, row in df.iterrows()
-    #}
-    # options can also be written as
     options ={}
     for idx, row in df.iterrows():
         display_text = row['name'] + "  (" + str(row['contact']) + ")"
@@ -295,7 +286,7 @@ with tab_edit:
     if delete_btn:
         name_del = df.loc[sel_idx, "name"]
         updated  = st.session_state.df.drop(index=sel_idx).reset_index(drop=True)
-        # Shift message log keys after the deleted index
+        # Shifting message log keys after the deleted index
         new_log  = {}
         for k, v in st.session_state.msg_log.items():
             if k < sel_idx:   new_log[k]     = v
@@ -305,9 +296,9 @@ with tab_edit:
         st.success(f"🗑️ {name_del} removed.")
         st.rerun()
 
-# ─────────────────────────────────────────────────────────────────────────────
+
 # TAB 4 — AI MESSAGES
-# ─────────────────────────────────────────────────────────────────────────────
+
 with tab_ai:
     st.subheader("Generate Follow-Up Message")
     st.info("Make sure to set your Groq API key in the sidebar before generating messages.", icon="💡")
@@ -335,35 +326,34 @@ with tab_ai:
             if st.session_state.llm is None:
                 try:
                     st.session_state.llm = FollowUpGenerator(api_key)
-                except EnvironmentError as e:
+                except Exception as e:
                     st.error(str(e))
                     st.stop()
 
-            with st.spinner("Generating…"):
-                message = st.session_state.llm.generate({
-                    "name":             ai_row["name"],
-                    "contact":          ai_row["contact"],
-                    "company":          ai_row["company"],
-                    "last_interaction": str(ai_row["last_interaction"]),
-                    "next_followup":    str(ai_row["next_followup"]),
-                    "status":           ai_row["status"],
-                    "interest_level":   ai_row["interest_level"],
-                    "notes":            ai_row["notes"],
-                }, tone=tone)
+                with st.spinner("Generating…"):
+                    message = st.session_state.llm.generate({
+                        "name":             ai_row["name"],
+                        "contact":          ai_row["contact"],
+                        "company":          ai_row["company"],
+                        "last_interaction": str(ai_row["last_interaction"]),
+                        "next_followup":    str(ai_row["next_followup"]),
+                        "status":           ai_row["status"],
+                        "interest_level":   ai_row["interest_level"],
+                        "notes":            ai_row["notes"],
+                    }, tone=tone)
 
 
-            st.text_area("Generated Message", message, height=220)
-            entry = {
-                "tone":    tone,
-                "message": message,
-                "ts":      pd.Timestamp.now().strftime("%d %b %Y, %H:%M"),
-            }
-            st.session_state.msg_log.setdefault(ai_idx, []).append(entry)
+                st.text_area("Generated Message", message, height=220)
+                entry = {
+                    "tone":    tone,
+                    "message": message,
+                    "ts":      pd.Timestamp.now().strftime("%d %b %Y, %H:%M"),
+                }
+                st.session_state.msg_log.setdefault(ai_idx, []).append(entry)
             
 
-# ─────────────────────────────────────────────────────────────────────────────
-# TAB 5 — ANALYTICS
-# ─────────────────────────────────────────────────────────────────────────────
+# TAB 5 — ANALYTICS 
+
 with tab_analytics:
     st.subheader("Lead Analytics")
     r1l, r1r = st.columns(2)
