@@ -1,12 +1,35 @@
 # 🤖 CRM Outreach Assistant
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-App-red)
+![LangGraph](https://img.shields.io/badge/LangGraph-Agent-green)
+![License](https://img.shields.io/badge/License-Apache%202.0-blue)
 
 A simple AI assistant that helps small sales teams stay on top of their follow-ups. You upload a CSV of your leads, it automatically figures out who needs attention first, and it can even write and send personalized follow-up emails for you — with you approving every single email before it goes out.
+---
+## 📑 Table of Contents
 
-🔗Live demo: [Click Me!!!!!!!!](https://crm-management-assistant.streamlit.app)
-
+- [📖 What this project does](#-what-this-project-does)
+- [🎥 Demo & Links](#-demo--links)
+- [✨ Features](#-features)
+- [📋 CSV Format](#-csv-format)
+- [🧠 How the Priority Score Works](#-how-the-priority-score-works)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [🚀 Getting Started](#-getting-started)
+- [🗂️ Project Structure](#️-project-structure)
+- [🔒 Privacy](#-privacy)
+- [📄 License](#-license)
 ---
 
-## What this project actually does
+## 🎥 Demo & Links
+### 🌐 Live Demo
+
+👉 **[Try CRM Outreach Assistant](https://crm-management-assistant.streamlit.app)**
+
+## 🏗️ Architecture
+
+![CRM Outreach Assistant Demo](assets/demo.gif)
+---
+## 📖 What this project does
 
 I built this because manually tracking "who did I follow up with, and when" gets messy fast once you have more than a handful of leads. So the app does three things:
 
@@ -73,70 +96,6 @@ Download your full list, or just a filtered view, as a CSV at any point — with
 
 ---
 
-## 🗂️ Project Structure
-
-```
-crm-outreach-assistant/
-│
-├── Main_app/
-│   └── app.py                  # Streamlit app — all the UI lives here
-│
-├── model/
-│   └── llm.py                  # Talks to Groq's LLaMA 3.3 model to write messages
-│
-├── important_functions/
-│   ├── scoring.py               # Works out the priority score and label for each lead
-│   └── tools.py                 # Session setup, data cleanup, follow-up bucketing
-│
-├── agent/
-│   ├── state.py                 # Defines what data the agent passes around
-│   ├── nodes.py                 # The actual steps: generate → review → send
-│   ├── graph.py                 # Wires those steps together into a LangGraph agent
-│   └── email_sender.py          # Sends the email over Gmail's SMTP
-│
-├── Database/
-│   ├── database.py              # SQLAlchemy + SQLite setup
-│   └── models.py                # Table definitions (for future persistent storage)
-│
-├── .gitignore
-└── README.md
-```
-
----
-
-## 🚀 Getting Started
-
-### 1. Clone the repo
-
-```bash
-git clone https://github.com/MLbyTharun/crm-outreach-assistant.git
-cd crm-outreach-assistant
-```
-
-### 2. Set up a virtual environment
-
-```bash
-python -m venv venv
-source venv/bin/activate        # On Windows: venv\Scripts\activate
-```
-
-### 3. Install the dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Run it
-
-```bash
-streamlit run Main_app/app.py
-```
-
-That's it — no `.env` file is required to get started. Once the app opens in your browser, you'll enter your Groq API key and Gmail credentials directly in the sidebar whenever you want to use the AI or email features.
-
-> Get a free Groq API key at [console.groq.com](https://console.groq.com). For Gmail, you'll need an **App Password** (Google Account → Security → 2-Step Verification → App Passwords) — your regular Gmail password won't work for SMTP.
-
----
 
 ## 📋 CSV Format
 
@@ -189,6 +148,68 @@ And the final label:
 | Version control | Git |
 ---
 
+## 🚀 Getting Started
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/MLbyTharun/crm-outreach-assistant.git
+cd crm-outreach-assistant
+```
+
+### 2. Set up a virtual environment
+
+```bash
+python -m venv venv
+source venv/bin/activate        # On Windows: venv\Scripts\activate
+```
+
+### 3. Install the dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run it
+
+```bash
+streamlit run Main_app/app.py
+```
+
+That's it — no `.env` file is required to get started. Once the app opens in your browser, you'll enter your Groq API key and Gmail credentials directly in the sidebar whenever you want to use the AI or email features.
+
+> Get a free Groq API key at [console.groq.com](https://console.groq.com). For Gmail, you'll need an **App Password** (Google Account → Security → 2-Step Verification → App Passwords) — your regular Gmail password won't work for SMTP.
+
+---
+## 🗂️ Project Structure
+
+```
+crm-outreach-assistant/
+│
+├── Main_app/
+│   └── app.py                  # Streamlit app — all the UI lives here
+│
+├── model/
+│   └── llm.py                  # Talks to Groq's LLaMA 3.3 model to write messages
+│
+├── important_functions/
+│   ├── scoring.py               # Works out the priority score and label for each lead
+│   └── tools.py                 # Session setup, data cleanup, follow-up bucketing
+│
+├── agent/
+│   ├── state.py                 # Defines what data the agent passes around
+│   ├── nodes.py                 # The actual steps: generate → review → send
+│   ├── graph.py                 # Wires those steps together into a LangGraph agent
+│   └── email_sender.py          # Sends the email over Gmail's SMTP
+│
+├── Database/
+│   ├── database.py              # SQLAlchemy + SQLite setup
+│   └── models.py                # Table definitions (for future persistent storage)
+│
+├── .gitignore
+└── README.md
+```
+
 ## 🔒 Privacy
 
 Everything you upload — leads, generated messages, edits — stays only in your own browser session. Nothing is persisted to a shared server or visible to other users. API keys and Gmail credentials are typed in live and used only for that session; they're never saved anywhere. Closing the tab or hitting "New file" wipes it all.
@@ -197,4 +218,4 @@ Everything you upload — leads, generated messages, edits — stays only in you
 
 ## 📄 License
 
-Open source(Apache Licence) — fork it, modify it, build on it.
+Open source under the Apache 2.0 License. — fork it, modify it, build on it.
