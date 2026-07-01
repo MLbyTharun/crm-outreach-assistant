@@ -5,8 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
 from agent.state import FollowUpState
-from agent.nodes import make_generate_node, review_emails, send_emails, make_send_node
-from agent.nodes import make_send_node
+from agent.nodes import make_generate_node, review_emails, make_send_node
 
 def build_graph(llm, gmail_sender: str, gmail_password: str):
     builder = StateGraph(FollowUpState)

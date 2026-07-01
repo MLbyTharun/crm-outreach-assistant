@@ -57,7 +57,7 @@ def review_emails(state: FollowUpState) -> dict:
 
 # Resume and SMTP layer to send email
 def make_send_node(gmail_sender: str, gmail_password: str):
-    def send_email(state: FollowUpState) -> dict:
+    def send_emails_node(state: FollowUpState) -> dict:
         results = []
         for email in state["reviewed_emails"]:
             if not email.get("approved", False):
@@ -79,4 +79,4 @@ def make_send_node(gmail_sender: str, gmail_password: str):
             })
 
         return {"sent_results": results}
-    return send_email
+    return send_emails_node
