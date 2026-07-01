@@ -180,7 +180,7 @@ with st.sidebar:
 # Tabs 
 tab_dash, tab_all, tab_edit, tab_ai, tab_analytics, tab_agent = st.tabs([
     "📊 Dashboard", "👥 All Customers", "✏️ Edit / Delete",
-    "✍️ AI Messages", "📈 Analytics","🤖Agent_Dev"
+    "✍️ AI Messages", "📈 Analytics","🦾 Agent_Dev"
 ])
 
 
