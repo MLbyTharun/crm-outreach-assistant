@@ -6,7 +6,7 @@ from langgraph.types import interrupt
 from agent.state import FollowUpState
 from agent.email_sender import send_email
 
-
+# Generates Email For given customers and store every customer's draft email in Generated as a list
 def make_generate_node(llm):
     """
     Factory — takes the FollowUpGenerator instance from session state
@@ -46,7 +46,7 @@ def make_generate_node(llm):
 
     return generate_followups
 
-
+# Interrupt Layer
 def review_emails(state: FollowUpState) -> dict:
     """
     Pauses graph execution for human review.
@@ -55,7 +55,7 @@ def review_emails(state: FollowUpState) -> dict:
     reviewed = interrupt({"emails": state["generated_emails"]})
     return {"reviewed_emails": reviewed}
 
-
+# Resume and SMTP layer to send email
 def send_emails(state: FollowUpState) -> dict:
     """
     Sends all approved emails and returns results.
