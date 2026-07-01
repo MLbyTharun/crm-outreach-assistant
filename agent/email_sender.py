@@ -10,22 +10,19 @@ GMAIL_SENDER = os.getenv("GMAIL_SENDER")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
 
 
-def send_email(to: str, subject: str, body: str) -> dict:
-    """
-    Sends a single email via Gmail SMTP.
-    Returns a dict with status and any error message.
-    """
+def send_email(to: str, subject: str, body: str,
+               sender: str, app_password: str) -> dict:
     try:
         msg = MIMEMultipart()
-        msg["From"] = GMAIL_SENDER
+        msg["From"] = sender
         msg["To"] = to
         msg["Subject"] = subject
 
         msg.attach(MIMEText(body, "plain"))
 
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-            server.login(GMAIL_SENDER, GMAIL_APP_PASSWORD)
-            server.sendmail(GMAIL_SENDER, to, msg.as_string())
+            server.login(sender, app_password)
+            server.sendmail(sender, to, msg.as_string())
 
         return {"status": "sent", "error": None}
 

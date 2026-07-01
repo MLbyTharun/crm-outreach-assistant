@@ -161,6 +161,18 @@ with st.sidebar:
         value="", # can be setted in .env file or can be directly setted in web
         help="Get a free key at console.groq.com"
     )
+    st.header("📧 Gmail Settings")
+    gmail_sender = st.text_input(
+        "Gmail_address",
+        value="",
+        help="The Gmail account you'll send from"
+    )
+    gmail_password = st.text_input(
+        "Gmail app password",
+        type="password",
+        value="",
+        help="Google Account -> Security -> 2-Step Verification ->App passwords"
+    )
     
 
     
@@ -409,7 +421,9 @@ with tab_agent:
         if not api_key:
             st.error("Please enter your Groq API key in the sidebar first.")
             st.stop()
-
+        if not gmail_sender or not gmail_password:
+            st.error("Please enter your Gmail address and app password in the sidebar.")
+            st.stop()
         # Instantiate LLM if not already done
         if st.session_state.llm is None:
             try:
@@ -420,7 +434,7 @@ with tab_agent:
 
         # Build graph
         from agent.graph import build_graph
-        graph = build_graph(st.session_state.llm) #^^
+        graph = build_graph(st.session_state.llm, gmail_sender, gmail_password) #^^
         thread = {"configurable": {"thread_id": "crm-agent-7"}}
 
         # Prepare customer list from selected dataframe

@@ -56,27 +56,27 @@ def review_emails(state: FollowUpState) -> dict:
     return {"reviewed_emails": reviewed}
 
 # Resume and SMTP layer to send email
-def send_emails(state: FollowUpState) -> dict:
-    """
-    Sends all approved emails and returns results.
-    """
-    results = []
+def make_send_node(gmail_sender: str, gmail_password: str):
+    def send_email(state: FollowUpState) -> dict:
+        results = []
+        for email in state["reviewed_emails"]:
+            if not email.get("approved", False):
+                results.append({**email, "status": "skipped", "error": None})
+                continue
 
-    for email in state["reviewed_emails"]:
-        if not email.get("approved", False):
-            results.append({**email, "status": "skipped", "error": None})
-            continue
+            result = send_email(
+                to=email["email"],
+                subject=email["subject"],
+                body=email["body"],
+                sender=gmail_sender,
+                app_password=gmail_password,
+            )
 
-        result = send_email(
-            to=email["email"],
-            subject=email["subject"],
-            body=email["body"],
-        )
+            results.append({
+                **email,
+                "status": result["status"],
+                "error":  result["error"],
+            })
 
-        results.append({
-            **email,
-            "status": result["status"],
-            "error":  result["error"],
-        })
-
-    return {"sent_results": results}
+        return {"sent_results": results}
+    return send_email
