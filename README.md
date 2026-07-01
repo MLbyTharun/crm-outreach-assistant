@@ -2,7 +2,7 @@
 
 A simple AI assistant that helps small sales teams stay on top of their follow-ups. You upload a CSV of your leads, it automatically figures out who needs attention first, and it can even write and send personalized follow-up emails for you — with you approving every single email before it goes out.
 
-Live demo: [df](https://crm-management-assistant.streamlit.app)
+🔗Live demo: [Click Me!!!!!!!!](https://crm-management-assistant.streamlit.app)
 
 ---
 
@@ -45,7 +45,7 @@ That score turns into an easy label — 🔴 Hot, 🟡 Warm, or 🟢 Cool — so
 The dashboard buckets every lead into one of these three groups based on their next follow-up date, so you never have to manually check dates against today's calendar.
 
 ### ✍️ AI-generated follow-up messages
-Pick any lead, pick a tone (Professional, Friendly, Polite, or Persuasive), and the app writes a short, personalized message grounded in that lead's actual notes and history — not a generic template. Every message you generate is saved in that lead's history for the session, so you can look back at what was sent before.
+Pick any lead, pick a tone (Professional, Friendly, Polite, or Persuasive), and the app writes a short, personalized message grounded in that lead's actual notes 
 
 ### 🤖 The real agent workflow — with a human in the loop
 This is the part I'm most excited about. For your overdue leads, there's a proper agent (built with LangGraph) that runs a multi-step workflow:
@@ -186,7 +186,7 @@ And the final label:
 | Email sending | Gmail SMTP |
 | Database | [SQLAlchemy](https://www.sqlalchemy.org/) + SQLite |
 | Env management | [python-dotenv](https://github.com/theskumar/python-dotenv) |
-
+| Version control | Git |
 ---
 
 ## 🔒 Privacy
@@ -197,4 +197,4 @@ Everything you upload — leads, generated messages, edits — stays only in you
 
 ## 📄 License
 
-Open source — fork it, modify it, build on it.
+Open source(Apache Licence) — fork it, modify it, build on it.
