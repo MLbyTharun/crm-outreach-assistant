@@ -166,9 +166,9 @@ with st.sidebar:
     
 
 # Tabs 
-tab_dash, tab_all, tab_edit, tab_ai, tab_analytics = st.tabs([
+tab_dash, tab_all, tab_edit, tab_ai, tab_analytics, tab_agent = st.tabs([
     "📊 Dashboard", "👥 All Customers", "✏️ Edit / Delete",
-    "✍️ AI Messages", "📈 Analytics",
+    "✍️ AI Messages", "📈 Analytics","Agent_Dev"
 ])
 
 
@@ -382,3 +382,123 @@ with tab_analytics:
     use_container_width=True
         )
     
+with tab_agent:
+    st.subheader("📧 AI Email Agent")
+    st.info("Generates follow-up emails for overdue customers, lets you review and edit them, then sends them via Gmail.", icon="🤖")
+
+    # Step 1: Customer selection
+    overdue_df = df[df["bucket"] == "Overdue"]
+
+    if overdue_df.empty:
+        st.success("No overdue customers right now!")
+        st.stop()
+
+    selected_names = st.multiselect(
+        "Select customers to follow up with",
+        options=overdue_df["name"].tolist(),
+        default=overdue_df["name"].tolist(),
+    )
+
+    selected_df = overdue_df[overdue_df["name"].isin(selected_names)]
+
+    # Step 2: Run agent
+    run_btn = st.button("🚀 Run Agent", type="primary",
+                        disabled=not selected_names)
+
+    if run_btn:
+        if not api_key:
+            st.error("Please enter your Groq API key in the sidebar first.")
+            st.stop()
+
+        # Instantiate LLM if not already done
+        if st.session_state.llm is None:
+            try:
+                st.session_state.llm = FollowUpGenerator(api_key)
+            except Exception as e:
+                st.error(f"LLM error: {e}")
+                st.stop()
+
+        # Build graph
+        from agent.graph import build_graph
+        graph = build_graph(st.session_state.llm) #^^
+        thread = {"configurable": {"thread_id": "crm-agent-7"}}
+
+        # Prepare customer list from selected dataframe
+        customers = selected_df.to_dict(orient="records")
+
+        with st.spinner("Generating emails..."):
+            result = graph.invoke(
+                {"customers": customers},
+                config=thread,
+            )
+
+        # Store graph + thread in session for resume step
+        st.session_state["agent_graph"]  = graph
+        st.session_state["agent_thread"] = thread
+        st.session_state["agent_emails"] = result["__interrupt__"][0].value["emails"]
+        st.rerun()
+
+    # Step 3: Review & Edit
+    if "agent_emails" in st.session_state:
+        st.divider()
+        st.subheader("📝 Review & Edit Emails")
+        st.caption("Edit any email below. Uncheck to skip sending.")
+
+        edited_emails = []
+
+        for i, email in enumerate(st.session_state["agent_emails"]):  #^^^^^^^^^^
+            with st.expander(
+                f"{'✅' if email.get('approved', True) else '❌'} " # ^^^
+                f"{email['name']} — {email['company']} ({email['email']})",
+                expanded=True
+            ):
+                approved = st.checkbox("Approve for sending", value=True, key=f"approve_{i}")
+                subject  = st.text_input("Subject", value=email["subject"], key=f"subject_{i}")
+                body     = st.text_area("Email body", value=email["body"], height=180, key=f"body_{i}")
+
+                edited_emails.append({
+                    **email,
+                    "approved": approved,
+                    "subject":  subject,
+                    "body":     body,
+                })
+
+        st.divider()
+        send_btn = st.button("📤 Approve & Send", type="primary")
+
+        if send_btn:
+            from langgraph.types import Command
+
+            graph  = st.session_state["agent_graph"]
+            thread = st.session_state["agent_thread"]
+
+            with st.spinner("Sending emails..."):
+                final = graph.invoke(
+                    Command(resume=edited_emails),
+                    config=thread,
+                )
+
+            # Step 4: Results
+            st.divider()
+            st.subheader("📊 Send Results")
+
+            sent    = [r for r in final["sent_results"] if r["status"] == "sent"]
+            skipped = [r for r in final["sent_results"] if r["status"] == "skipped"]
+            failed  = [r for r in final["sent_results"] if r["status"] == "failed"]
+
+            c1, c2, c3 = st.columns(3)
+            c1.metric("✅ Sent",    len(sent))
+            c2.metric("⏭️ Skipped", len(skipped))
+            c3.metric("❌ Failed",  len(failed))
+
+            for r in final["sent_results"]:
+                if r["status"] == "sent":
+                    st.success(f"✅ Sent to {r['name']} ({r['email']})")
+                elif r["status"] == "skipped":
+                    st.info(f"⏭️ Skipped {r['name']}")
+                elif r["status"] == "failed":
+                    st.error(f"❌ Failed for {r['name']}: {r['error']}")
+
+            # Clearing agent state after sending mial
+            for key in ["agent_graph", "agent_thread", "agent_emails"]:
+                del st.session_state[key]
