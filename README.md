@@ -2,7 +2,7 @@
 
 A simple AI assistant that helps small sales teams stay on top of their follow-ups. You upload a CSV of your leads, it automatically figures out who needs attention first, and it can even write and send personalized follow-up emails for you — with you approving every single email before it goes out.
 
-Live demo: [df](crm-management-assistant.streamlit.app)
+Live demo: [df](https://crm-management-assistant.streamlit.app)
 
 ---
 
