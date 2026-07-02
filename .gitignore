@@ -7,4 +7,3 @@ venv/
 *.sqlite3
 *.db
 tests/
-.txt
