@@ -178,9 +178,8 @@ with st.sidebar:
     
 
 # Tabs 
-tab_dash, tab_all, tab_edit, tab_ai, tab_analytics, tab_agent = st.tabs([
-    "📊 Dashboard", "👥 All Customers", "✏️ Edit / Delete",
-    "✍️ AI Messages", "📈 Analytics","🦾 Agent_Dev"
+tab_dash, tab_all, tab_edit, tab_analytics, tab_agent = st.tabs([
+    "📊 Dashboard", "👥 All Customers", "✏️ Edit / Delete", "📈 Analytics","🦾 Agent_Dev"
 ])
 
 
@@ -311,58 +310,8 @@ with tab_edit:
 
 # TAB 4 — AI MESSAGES
 
-with tab_ai:
-    st.subheader("Generate Follow-Up Message")
-    st.info("Make sure to set your Groq API key in the sidebar before generating messages.", icon="💡")
-    col_l, col_r = st.columns([1, 1])
 
-    with col_l:
-        ai_opts  = {
-            f"{r['name']}  —  {r['company']}  {r['priority_label']}": idx
-            for idx, r in df.iterrows()
-        }
-        ai_label = st.selectbox("Select customer", list(ai_opts.keys()), key="ai_sel")
-        ai_idx   = ai_opts[ai_label]
-        ai_row   = df.loc[ai_idx]
-        tone     = st.selectbox("Tone", TONES)
-        st.caption(
-            f"**Status:** {ai_row['status']} · "
-            f"**Interest:** {ai_row['interest_level']} · "
-            f"**Bucket:** {ai_row['bucket']}"
-        )
-        gen_btn = st.button("✨ Generate Message", type="primary")
-
-    with col_r:
-        if gen_btn:
-            # Instantiate once per session; reuse on every generation
-            if st.session_state.llm is None:
-                try:
-                    st.session_state.llm = FollowUpGenerator(api_key)
-                except Exception as e:
-                    st.error(str(e))
-                    st.stop()
-
-                with st.spinner("Generating…"):
-                    message = st.session_state.llm.generate({
-                        "name":             ai_row["name"],
-                        "contact":          ai_row["contact"],
-                        "company":          ai_row["company"],
-                        "last_interaction": str(ai_row["last_interaction"]),
-                        "next_followup":    str(ai_row["next_followup"]),
-                        "status":           ai_row["status"],
-                        "interest_level":   ai_row["interest_level"],
-                        "notes":            ai_row["notes"],
-                    }, tone=tone)
-
-
-                st.text_area("Generated Message", message, height=220)
-                entry = {
-                    "tone":    tone,
-                    "message": message,
-                    "ts":      pd.Timestamp.now().strftime("%d %b %Y, %H:%M"),
-                }
-                st.session_state.msg_log.setdefault(ai_idx, []).append(entry)
-            
+    
 
 # TAB 5 — ANALYTICS 
 
