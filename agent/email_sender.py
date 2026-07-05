@@ -2,13 +2,6 @@ import smtplib
 import os
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from dotenv import load_dotenv
-
-load_dotenv()
-
-GMAIL_SENDER = os.getenv("GMAIL_SENDER")
-GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
-
 
 def send_email(to: str, subject: str, body: str,
                sender: str, app_password: str) -> dict:
