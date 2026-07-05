@@ -438,7 +438,7 @@ with tab_agent:
         thread = {"configurable": {"thread_id": "crm-agent-7"}}
 
         # Prepare customer list from selected dataframe
-        customers = selected_df.to_dict(orient="records")
+        customers = selected_df.to_dict(orient="records") #^^
 
         with st.spinner("Generating emails..."):
             result = graph.invoke(
@@ -446,12 +446,13 @@ with tab_agent:
                 config=thread,
             )
 
-        # Store graph + thread in session for resume step
+        # Storing graph + thread in session for human-Resume step
         st.session_state["agent_graph"]  = graph
         st.session_state["agent_thread"] = thread
         st.session_state["agent_emails"] = result["__interrupt__"][0].value["emails"]
         st.rerun()
-
+    
+    # After all generated Drafts
     # Step 3: Review & Edit
     if "agent_emails" in st.session_state:
         st.divider()
@@ -466,7 +467,7 @@ with tab_agent:
                 f"{email['name']} — {email['company']} ({email['email']})",
                 expanded=True
             ):
-                approved = st.checkbox("Approve for sending", value=True, key=f"approve_{i}")
+                approved = st.checkbox("Approve for sending", value=True, key=f"approve_{i}") #^^^
                 subject  = st.text_input("Subject", value=email["subject"], key=f"subject_{i}")
                 body     = st.text_area("Email body", value=email["body"], height=180, key=f"body_{i}")
 
@@ -475,7 +476,7 @@ with tab_agent:
                     "approved": approved,
                     "subject":  subject,
                     "body":     body,
-                })
+                }) #^^
 
         st.divider()
         send_btn = st.button("📤 Approve & Send", type="primary")
@@ -486,7 +487,7 @@ with tab_agent:
             graph  = st.session_state["agent_graph"]
             thread = st.session_state["agent_thread"]
 
-            with st.spinner("Sending emails..."):
+            with st.spinner("Sending emails...."):
                 final = graph.invoke(
                     Command(resume=edited_emails),
                     config=thread,
@@ -496,7 +497,7 @@ with tab_agent:
             st.divider()
             st.subheader("📊 Send Results")
 
-            sent    = [r for r in final["sent_results"] if r["status"] == "sent"]
+            sent    = [r for r in final["sent_results"] if r["status"] == "sent"] #^^^
             skipped = [r for r in final["sent_results"] if r["status"] == "skipped"]
             failed  = [r for r in final["sent_results"] if r["status"] == "failed"]
 
@@ -515,4 +516,4 @@ with tab_agent:
 
             # Clearing agent state after sending mial
             for key in ["agent_graph", "agent_thread", "agent_emails"]:
-                del st.session_state[key]
+                del st.session_state[key] #^^
