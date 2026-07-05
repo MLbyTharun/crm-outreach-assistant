@@ -39,8 +39,8 @@ def make_generate_node(llm):
                 "company":  customer.get("company", ""),
                 "subject":  f"Following up — {customer.get('company', '')}",
                 "body":     body,
-                "approved": True,   # default to approved, human can reject
-            })
+                "approved": True,   # default to approved, human  can reject
+            }) # its per customer
 
         return {"generated_emails": generated}
 
@@ -52,7 +52,7 @@ def review_emails(state: FollowUpState) -> dict:
     Pauses graph execution for human review.
     Streamlit will resume with edited emails via Command(resume=...).
     """
-    reviewed = interrupt({"emails": state["generated_emails"]})
+    reviewed = interrupt({"emails": state["generated_emails"]})#key^^
     return {"reviewed_emails": reviewed}
 
 # Resume and SMTP layer to send email
