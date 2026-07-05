@@ -163,7 +163,7 @@ with st.sidebar:
     )
     st.header("📧 Gmail Settings")
     gmail_sender = st.text_input(
-        "Gmail_address",
+        "Gmail address",
         value="",
         help="The Gmail account you'll send from"
     )
@@ -308,12 +308,9 @@ with tab_edit:
         st.rerun()
 
 
-# TAB 4 — AI MESSAGES
 
 
-    
-
-# TAB 5 — ANALYTICS 
+# TAB 4 — ANALYTICS 
 
 with tab_analytics:
     st.subheader("Lead Analytics")
