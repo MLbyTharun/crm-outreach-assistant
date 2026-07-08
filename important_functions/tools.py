@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import date
 import pandas as pd
+import uuid
 from important_functions.scoring import compute_priority_score, score_label
 today = date.today()
 
@@ -11,6 +12,7 @@ def init_state():
         "msg_log":       {},     # {row_idx: [{"tone":..,"message":..,"ts":..}]}
         "last_file_key": None,   # prevent re-import
         "llm":           None,   # FollowUpGenerator instance — created once per session
+        "session_thread_id": str(uuid.uuid4()),
     }.items():
         if k not in st.session_state:
             st.session_state[k] = v
