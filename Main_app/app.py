@@ -39,8 +39,8 @@ def has_data() -> bool:
 
 
 
-#  UPLOAD GATE — every session starts here; nothing else is shown until a CSV
-#  is loaded. Each browser session is completely independent.
+#  UPLOAD GATE — every session starts here, nothing else is shown until a CSV
+#  is uploaded. Each browser session is completely independent.
 
 if not has_data():
     st.title("🤖 AI Follow-Up Assistant")
@@ -361,16 +361,16 @@ with tab_agent:
 
     # Step 2: Run agent
     run_btn = st.button("🚀 Run Agent", type="primary",
-                        disabled=not selected_names)
+                        disabled= not selected_names)
 
-    if run_btn:
+    if run_btn: # checking api keys ^^
         if not api_key:
             st.error("Please enter your Groq API key in the sidebar first.")
             st.stop()
         if not gmail_sender or not gmail_password:
             st.error("Please enter your Gmail address and app password in the sidebar.")
             st.stop()
-        # Instantiate LLM if not already done
+        # Instantiating LLM if not already done
         if st.session_state.llm is None:
             try:
                 st.session_state.llm = FollowUpGenerator(api_key)
@@ -378,12 +378,12 @@ with tab_agent:
                 st.error(f"LLM error: {e}")
                 st.stop()
 
-        # Build graph
+        # Building graph
         from agent.graph import build_graph
         graph = build_graph(st.session_state.llm, gmail_sender, gmail_password) #^^
-        thread = {"configurable": {"thread_id": "crm-agent-7"}}
+        thread = {"configurable": {"thread_id": st.session_state.session_thread_id}}
 
-        # Prepare customer list from selected dataframe
+        # Preparing customer list from selected dataframe -->[{name:xx,age:yy}]
         customers = selected_df.to_dict(orient="records") #^^
 
         with st.spinner("Generating emails..."):
