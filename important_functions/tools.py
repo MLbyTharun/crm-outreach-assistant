@@ -12,7 +12,7 @@ def init_state():
         "msg_log":       {},     # {row_idx: [{"tone":..,"message":..,"ts":..}]}
         "last_file_key": None,   # prevent re-import
         "llm":           None,   # FollowUpGenerator instance — created once per session
-        "session_thread_id": str(uuid.uuid4()),
+        "session_thread_id": str(uuid.uuid4()),  # was causing issues while multiple persons were using so, yeah
     }.items():
         if k not in st.session_state:
             st.session_state[k] = v
